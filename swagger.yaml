@@ -1,1 +1,595 @@
-{"openapi":"3.0.1","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://localhost:8081","description":"Generated server url"}],"tags":[{"name":"Test API","description":"테스트를 위한 agent 프로세스와의 통신 API"},{"name":"Docker API","description":"도커 관련 API"},{"name":"Main API","description":"테스트 로직 관련한 주요 API"},{"name":"Actuator","description":"Monitor and interact","externalDocs":{"description":"Spring Boot Actuator Web API Documentation","url":"https://docs.spring.io/spring-boot/docs/current/actuator-api/html/"}}],"paths":{"/test-results":{"get":{"tags":["Test API"],"summary":"모든 테스트 완료 후 저장된 전체 결과를 조회합니다.","description":"현재까지 저장된 모든 테스트 결과 리소스 목록을 서버로부터 조회합니다.","operationId":"getAllTestResult","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"500":{"description":"전체 테스트 결과 조회 실패","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseListTestResult"}}}},"200":{"description":"전체 테스트 결과 조회 성공","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseListTestResult"}}}}}},"post":{"tags":["Test API"],"summary":"에이전트 서버로부터 개별 테스트 결과 정보를 받아 저장합니다.","description":"개별 에이전트가 수행한 1회 테스트 결과를 서버에 제출하여 새로운 테스트 결과 리소스를 생성합니다.","operationId":"getTestResult","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TestResult"}}},"required":true},"responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponse"}}}}}}},"/test-results/optimized":{"post":{"tags":["Test API"],"summary":"Optimizer로부터 전체 테스트를 통한 최적화된 리소스 조합 결과를 수신하여 저장합니다.","description":"Optimizer가 수행한 모든 테스트의 최종 결과를 서버에 제출하고 처리하여 최적화된 테스트 결과 리소스를 생성합니다.","operationId":"testResult","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/FinalTestResult"}}},"required":true},"responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponse"}}}}}}},"/jobs":{"post":{"tags":["Test API"],"summary":"리소스 조합 받음","description":"Optimizer로부터 가능한 리소스 조합 정보를 받아옵니다.","operationId":"getJobs","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/DockerComposeUpdateRequest"}}},"required":true},"responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponse"}}}}}}},"/docker-containers/start":{"post":{"tags":["Docker API"],"summary":"종료되어 있던 Docker 컨테이너를 실행시킵니다.","description":"하드코딩된 특정 Docker 컨테이너의 상태를 '종료됨'에서 '실행 중'으로 변경합니다.","operationId":"docker","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponse"}}}}}}},"/configurations":{"post":{"tags":["Main API"],"summary":"사용자로부터 테스트 관련 설정 정보를 받아 저장합니다.","description":"사용자가 웹 UI 등을 통해 입력한 테스트 관련 설정 정보를 서버에 제출하여 새로운 설정 리소스를 생성합니다.","operationId":"getConfig","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserTestRequest"}}},"required":true},"responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponse"}}}}}}},"/actuator":{"get":{"tags":["Actuator"],"summary":"Actuator root web endpoint","operationId":"links","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/vnd.spring-boot.actuator.v3+json":{"schema":{"type":"object","additionalProperties":{"type":"object","additionalProperties":{"$ref":"#/components/schemas/Link"}}}},"application/vnd.spring-boot.actuator.v2+json":{"schema":{"type":"object","additionalProperties":{"type":"object","additionalProperties":{"$ref":"#/components/schemas/Link"}}}},"application/json":{"schema":{"type":"object","additionalProperties":{"type":"object","additionalProperties":{"$ref":"#/components/schemas/Link"}}}}}}}}},"/actuator/prometheus":{"get":{"tags":["Actuator"],"summary":"Actuator web endpoint 'prometheus'","operationId":"prometheus","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"text/plain;version=0.0.4;charset=utf-8":{"schema":{"type":"object"}},"application/openmetrics-text;version=1.0.0;charset=utf-8":{"schema":{"type":"object"}}}}}}},"/actuator/info":{"get":{"tags":["Actuator"],"summary":"Actuator web endpoint 'info'","operationId":"info","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/vnd.spring-boot.actuator.v3+json":{"schema":{"type":"object"}},"application/vnd.spring-boot.actuator.v2+json":{"schema":{"type":"object"}},"application/json":{"schema":{"type":"object"}}}}}}},"/actuator/health":{"get":{"tags":["Actuator"],"summary":"Actuator web endpoint 'health'","operationId":"health","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/vnd.spring-boot.actuator.v3+json":{"schema":{"type":"object"}},"application/vnd.spring-boot.actuator.v2+json":{"schema":{"type":"object"}},"application/json":{"schema":{"type":"object"}}}}}}},"/actuator/health/**":{"get":{"tags":["Actuator"],"summary":"Actuator web endpoint 'health-path'","operationId":"health-path","responses":{"400":{"description":"Bad Request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/CustomApiResponseString"}}}},"200":{"description":"OK","content":{"application/vnd.spring-boot.actuator.v3+json":{"schema":{"type":"object"}},"application/vnd.spring-boot.actuator.v2+json":{"schema":{"type":"object"}},"application/json":{"schema":{"type":"object"}}}}}}}},"components":{"schemas":{"CustomApiResponseString":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"status":{"type":"string","enum":["100 CONTINUE","101 SWITCHING_PROTOCOLS","102 PROCESSING","103 EARLY_HINTS","103 CHECKPOINT","200 OK","201 CREATED","202 ACCEPTED","203 NON_AUTHORITATIVE_INFORMATION","204 NO_CONTENT","205 RESET_CONTENT","206 PARTIAL_CONTENT","207 MULTI_STATUS","208 ALREADY_REPORTED","226 IM_USED","300 MULTIPLE_CHOICES","301 MOVED_PERMANENTLY","302 FOUND","302 MOVED_TEMPORARILY","303 SEE_OTHER","304 NOT_MODIFIED","305 USE_PROXY","307 TEMPORARY_REDIRECT","308 PERMANENT_REDIRECT","400 BAD_REQUEST","401 UNAUTHORIZED","402 PAYMENT_REQUIRED","403 FORBIDDEN","404 NOT_FOUND","405 METHOD_NOT_ALLOWED","406 NOT_ACCEPTABLE","407 PROXY_AUTHENTICATION_REQUIRED","408 REQUEST_TIMEOUT","409 CONFLICT","410 GONE","411 LENGTH_REQUIRED","412 PRECONDITION_FAILED","413 PAYLOAD_TOO_LARGE","413 REQUEST_ENTITY_TOO_LARGE","414 URI_TOO_LONG","414 REQUEST_URI_TOO_LONG","415 UNSUPPORTED_MEDIA_TYPE","416 REQUESTED_RANGE_NOT_SATISFIABLE","417 EXPECTATION_FAILED","418 I_AM_A_TEAPOT","419 INSUFFICIENT_SPACE_ON_RESOURCE","420 METHOD_FAILURE","421 DESTINATION_LOCKED","422 UNPROCESSABLE_ENTITY","423 LOCKED","424 FAILED_DEPENDENCY","425 TOO_EARLY","426 UPGRADE_REQUIRED","428 PRECONDITION_REQUIRED","429 TOO_MANY_REQUESTS","431 REQUEST_HEADER_FIELDS_TOO_LARGE","451 UNAVAILABLE_FOR_LEGAL_REASONS","500 INTERNAL_SERVER_ERROR","501 NOT_IMPLEMENTED","502 BAD_GATEWAY","503 SERVICE_UNAVAILABLE","504 GATEWAY_TIMEOUT","505 HTTP_VERSION_NOT_SUPPORTED","506 VARIANT_ALSO_NEGOTIATES","507 INSUFFICIENT_STORAGE","508 LOOP_DETECTED","509 BANDWIDTH_LIMIT_EXCEEDED","510 NOT_EXTENDED","511 NETWORK_AUTHENTICATION_REQUIRED"]},"data":{"type":"string"}}},"TestResult":{"type":"object"},"CustomApiResponse":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"status":{"type":"string","enum":["100 CONTINUE","101 SWITCHING_PROTOCOLS","102 PROCESSING","103 EARLY_HINTS","103 CHECKPOINT","200 OK","201 CREATED","202 ACCEPTED","203 NON_AUTHORITATIVE_INFORMATION","204 NO_CONTENT","205 RESET_CONTENT","206 PARTIAL_CONTENT","207 MULTI_STATUS","208 ALREADY_REPORTED","226 IM_USED","300 MULTIPLE_CHOICES","301 MOVED_PERMANENTLY","302 FOUND","302 MOVED_TEMPORARILY","303 SEE_OTHER","304 NOT_MODIFIED","305 USE_PROXY","307 TEMPORARY_REDIRECT","308 PERMANENT_REDIRECT","400 BAD_REQUEST","401 UNAUTHORIZED","402 PAYMENT_REQUIRED","403 FORBIDDEN","404 NOT_FOUND","405 METHOD_NOT_ALLOWED","406 NOT_ACCEPTABLE","407 PROXY_AUTHENTICATION_REQUIRED","408 REQUEST_TIMEOUT","409 CONFLICT","410 GONE","411 LENGTH_REQUIRED","412 PRECONDITION_FAILED","413 PAYLOAD_TOO_LARGE","413 REQUEST_ENTITY_TOO_LARGE","414 URI_TOO_LONG","414 REQUEST_URI_TOO_LONG","415 UNSUPPORTED_MEDIA_TYPE","416 REQUESTED_RANGE_NOT_SATISFIABLE","417 EXPECTATION_FAILED","418 I_AM_A_TEAPOT","419 INSUFFICIENT_SPACE_ON_RESOURCE","420 METHOD_FAILURE","421 DESTINATION_LOCKED","422 UNPROCESSABLE_ENTITY","423 LOCKED","424 FAILED_DEPENDENCY","425 TOO_EARLY","426 UPGRADE_REQUIRED","428 PRECONDITION_REQUIRED","429 TOO_MANY_REQUESTS","431 REQUEST_HEADER_FIELDS_TOO_LARGE","451 UNAVAILABLE_FOR_LEGAL_REASONS","500 INTERNAL_SERVER_ERROR","501 NOT_IMPLEMENTED","502 BAD_GATEWAY","503 SERVICE_UNAVAILABLE","504 GATEWAY_TIMEOUT","505 HTTP_VERSION_NOT_SUPPORTED","506 VARIANT_ALSO_NEGOTIATES","507 INSUFFICIENT_STORAGE","508 LOOP_DETECTED","509 BANDWIDTH_LIMIT_EXCEEDED","510 NOT_EXTENDED","511 NETWORK_AUTHENTICATION_REQUIRED"]},"data":{"type":"object"}}},"FinalTestResult":{"type":"object"},"DockerComposeUpdateRequest":{"type":"object","properties":{"cpu":{"type":"number","format":"double"},"mem":{"type":"string"}}},"UserTestRequest":{"type":"object","properties":{"selectedCloudService":{"type":"string"},"cpuMemoryWeightRatio":{"type":"string"},"cpuLowerBound":{"type":"integer","format":"int32"},"cpuUpperBound":{"type":"integer","format":"int32"},"memoryLowerBound":{"type":"integer","format":"int32"},"memoryUpperBound":{"type":"integer","format":"int32"},"quantileCount":{"type":"integer","format":"int32"},"testCount":{"type":"integer","format":"int32"},"apiFailureThresholdMs":{"type":"integer","format":"int32"}}},"CustomApiResponseListTestResult":{"type":"object","properties":{"code":{"type":"integer","format":"int32"},"status":{"type":"string","enum":["100 CONTINUE","101 SWITCHING_PROTOCOLS","102 PROCESSING","103 EARLY_HINTS","103 CHECKPOINT","200 OK","201 CREATED","202 ACCEPTED","203 NON_AUTHORITATIVE_INFORMATION","204 NO_CONTENT","205 RESET_CONTENT","206 PARTIAL_CONTENT","207 MULTI_STATUS","208 ALREADY_REPORTED","226 IM_USED","300 MULTIPLE_CHOICES","301 MOVED_PERMANENTLY","302 FOUND","302 MOVED_TEMPORARILY","303 SEE_OTHER","304 NOT_MODIFIED","305 USE_PROXY","307 TEMPORARY_REDIRECT","308 PERMANENT_REDIRECT","400 BAD_REQUEST","401 UNAUTHORIZED","402 PAYMENT_REQUIRED","403 FORBIDDEN","404 NOT_FOUND","405 METHOD_NOT_ALLOWED","406 NOT_ACCEPTABLE","407 PROXY_AUTHENTICATION_REQUIRED","408 REQUEST_TIMEOUT","409 CONFLICT","410 GONE","411 LENGTH_REQUIRED","412 PRECONDITION_FAILED","413 PAYLOAD_TOO_LARGE","413 REQUEST_ENTITY_TOO_LARGE","414 URI_TOO_LONG","414 REQUEST_URI_TOO_LONG","415 UNSUPPORTED_MEDIA_TYPE","416 REQUESTED_RANGE_NOT_SATISFIABLE","417 EXPECTATION_FAILED","418 I_AM_A_TEAPOT","419 INSUFFICIENT_SPACE_ON_RESOURCE","420 METHOD_FAILURE","421 DESTINATION_LOCKED","422 UNPROCESSABLE_ENTITY","423 LOCKED","424 FAILED_DEPENDENCY","425 TOO_EARLY","426 UPGRADE_REQUIRED","428 PRECONDITION_REQUIRED","429 TOO_MANY_REQUESTS","431 REQUEST_HEADER_FIELDS_TOO_LARGE","451 UNAVAILABLE_FOR_LEGAL_REASONS","500 INTERNAL_SERVER_ERROR","501 NOT_IMPLEMENTED","502 BAD_GATEWAY","503 SERVICE_UNAVAILABLE","504 GATEWAY_TIMEOUT","505 HTTP_VERSION_NOT_SUPPORTED","506 VARIANT_ALSO_NEGOTIATES","507 INSUFFICIENT_STORAGE","508 LOOP_DETECTED","509 BANDWIDTH_LIMIT_EXCEEDED","510 NOT_EXTENDED","511 NETWORK_AUTHENTICATION_REQUIRED"]},"data":{"type":"array","items":{"$ref":"#/components/schemas/TestResult"}}}},"Link":{"type":"object","properties":{"href":{"type":"string"},"templated":{"type":"boolean"}}}}}}
+---
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8081
+  description: Generated server url
+tags:
+- name: Test API
+  description: 테스트를 위한 agent 프로세스와의 통신 API
+- name: Docker API
+  description: 도커 관련 API
+- name: Main API
+  description: 테스트 로직 관련한 주요 API
+- name: Actuator
+  description: Monitor and interact
+  externalDocs:
+    description: Spring Boot Actuator Web API Documentation
+    url: https://docs.spring.io/spring-boot/docs/current/actuator-api/html/
+paths:
+  "/test-results":
+    get:
+      tags:
+      - Test API
+      summary: 모든 테스트 완료 후 저장된 전체 결과를 조회합니다.
+      description: 현재까지 저장된 모든 테스트 결과 리소스 목록을 서버로부터 조회합니다.
+      operationId: getAllTestResult
+      responses:
+        '200':
+          description: 전체 테스트 결과 조회 성공
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseListTestResult"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+        '500':
+          description: 전체 테스트 결과 조회 실패
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseListTestResult"
+    post:
+      tags:
+      - Test API
+      summary: 에이전트 서버로부터 개별 테스트 결과 정보를 받아 저장합니다.
+      description: 개별 에이전트가 수행한 1회 테스트 결과를 서버에 제출하여 새로운 테스트 결과 리소스를 생성합니다.
+      operationId: getTestResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/TestResult"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/test-results/optimized":
+    post:
+      tags:
+      - Test API
+      summary: Optimizer로부터 전체 테스트를 통한 최적화된 리소스 조합 결과를 수신하여 저장합니다.
+      description: Optimizer가 수행한 모든 테스트의 최종 결과를 서버에 제출하고 처리하여 최적화된 테스트 결과 리소스를 생성합니다.
+      operationId: testResult
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FinalTestResult"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/jobs":
+    post:
+      tags:
+      - Test API
+      summary: 리소스 조합 받음
+      description: Optimizer로부터 가능한 리소스 조합 정보를 받아옵니다.
+      operationId: getJobs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DockerComposeUpdateRequest"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/docker-containers/start":
+    post:
+      tags:
+      - Docker API
+      summary: 종료되어 있던 Docker 컨테이너를 실행시킵니다.
+      description: 하드코딩된 특정 Docker 컨테이너의 상태를 '종료됨'에서 '실행 중'으로 변경합니다.
+      operationId: docker
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/configurations":
+    post:
+      tags:
+      - Main API
+      summary: 사용자로부터 테스트 관련 설정 정보를 받아 저장합니다.
+      description: 사용자가 웹 UI 등을 통해 입력한 테스트 관련 설정 정보를 서버에 제출하여 새로운 설정 리소스를 생성합니다.
+      operationId: getConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UserTestRequest"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/actuator":
+    get:
+      tags:
+      - Actuator
+      summary: Actuator root web endpoint
+      operationId: links
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.spring-boot.actuator.v3+json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  additionalProperties:
+                    "$ref": "#/components/schemas/Link"
+            application/vnd.spring-boot.actuator.v2+json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  additionalProperties:
+                    "$ref": "#/components/schemas/Link"
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: object
+                  additionalProperties:
+                    "$ref": "#/components/schemas/Link"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/actuator/prometheus":
+    get:
+      tags:
+      - Actuator
+      summary: Actuator web endpoint 'prometheus'
+      operationId: prometheus
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain;version=0.0.4;charset=utf-8:
+              schema:
+                type: object
+            application/openmetrics-text;version=1.0.0;charset=utf-8:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/actuator/info":
+    get:
+      tags:
+      - Actuator
+      summary: Actuator web endpoint 'info'
+      operationId: info
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.spring-boot.actuator.v3+json:
+              schema:
+                type: object
+            application/vnd.spring-boot.actuator.v2+json:
+              schema:
+                type: object
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/actuator/health":
+    get:
+      tags:
+      - Actuator
+      summary: Actuator web endpoint 'health'
+      operationId: health
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.spring-boot.actuator.v3+json:
+              schema:
+                type: object
+            application/vnd.spring-boot.actuator.v2+json:
+              schema:
+                type: object
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+  "/actuator/health/**":
+    get:
+      tags:
+      - Actuator
+      summary: Actuator web endpoint 'health-path'
+      operationId: health-path
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.spring-boot.actuator.v3+json:
+              schema:
+                type: object
+            application/vnd.spring-boot.actuator.v2+json:
+              schema:
+                type: object
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CustomApiResponseString"
+components:
+  schemas:
+    CustomApiResponseString:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        data:
+          type: string
+    TestResult:
+      type: object
+    CustomApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        data:
+          type: object
+    FinalTestResult:
+      type: object
+    DockerComposeUpdateRequest:
+      type: object
+      properties:
+        cpu:
+          type: number
+          format: double
+        mem:
+          type: string
+    UserTestRequest:
+      type: object
+      properties:
+        selectedCloudService:
+          type: string
+        cpuMemoryWeightRatio:
+          type: string
+        cpuLowerBound:
+          type: integer
+          format: int32
+        cpuUpperBound:
+          type: integer
+          format: int32
+        memoryLowerBound:
+          type: integer
+          format: int32
+        memoryUpperBound:
+          type: integer
+          format: int32
+        quantileCount:
+          type: integer
+          format: int32
+        testCount:
+          type: integer
+          format: int32
+        apiFailureThresholdMs:
+          type: integer
+          format: int32
+    CustomApiResponseListTestResult:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 EARLY_HINTS
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/TestResult"
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        templated:
+          type: boolean
